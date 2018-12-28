@@ -85,8 +85,7 @@ int main(int argc, char* argv[]) {
     }
     sim.add_model(model);
     if (sandbox){
-        //sim.sandbox();
-        sim.simulation_D();
+        sim.sandbox();
         return 0;
     }
     sim.simulation_A();

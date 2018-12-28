@@ -45,7 +45,7 @@ void Gene::parse_header(){
 }
 //constructors and destructors
 Gene::Gene(){
-
+    circular_sequence = false;
 }
 
 Gene::~Gene(){
@@ -79,6 +79,14 @@ const vector<char, allocator<char>> &Gene::getSequence() const {
 
 vector<Structure>& Gene::getStructures(){
     return rloop_structures;
+}
+
+bool Gene::getCircularSequence(){
+    return circular_sequence;
+}
+
+void Gene::setCircularSequence(bool value){
+    circular_sequence = value;
 }
 
 float Gene::compute_GC_skew(){
@@ -156,9 +164,23 @@ void Gene::print_gene(){
 }
 
 void Gene::compute_structures(Model &model){
-    //check for circular sequence conditions
+    vector<char> temp_circular_sequence;
     if (sequence.size() == 0){
         //throw exception
+    }
+    //check for circular sequence conditions
+    if (circular_sequence){
+        //create new "circular sequence"
+        for (int i=0; i < sequence.size();i++){
+            temp_circular_sequence.push_back(sequence[i]);
+        }
+        for (int i=0; i < sequence.size();i++){
+            temp_circular_sequence.push_back(sequence[i]);
+        }
+        //set windower to new sequence
+        windower.set_sequence(temp_circular_sequence);
+        //enact boundary condition
+        windower.set_left_limit(temp_circular_sequence[sequence.size()-1]);
     }
     //initializing the iterators ensures that the intial comparison in next_window_from_all_windows is not problematic
     std::vector<char>::iterator start = sequence.begin(),stop=sequence.begin()+1;
@@ -177,59 +199,6 @@ void Gene::compute_structures(Model &model){
         rloop_structures.push_back(temp); //need to make sure the default copy constructor is working properly
     }
     ground_state_energy = model.ground_state_energy();
-}
-
-vector<Structure> Gene::compute_structures_dynamic(Model& model, vector<char> input_sequence){
-    vector<Structure> temp_structures;
-    Windower temp_windower;
-    temp_windower.set_sequence(input_sequence);
-    //check for circular sequence conditions
-    if (input_sequence.size() == 0){
-        //throw exception
-    }
-    //initializing the iterators ensures that the intial comparison in next_window_from_all_windows is not problematic
-    std::vector<char>::iterator start = input_sequence.begin(),stop=input_sequence.begin()+1;
-    temp_windower.reset_window();
-    while (temp_windower.has_next_window()){
-        temp_windower.next_window_from_all_windows(start,stop);
-        Structure temp;
-        //set the Loci of the structure using the gene's Loci
-        temp.position.chromosome = position.chromosome;
-        temp.position.strand = position.strand;
-        temp.position.start_pos = position.start_pos + windower.get_current_start_offset();
-        temp.position.end_pos = position.start_pos + windower.get_current_stop_offset();
-        //pass the structure and window boundaries to the model
-        model.compute_structure(sequence,start,stop,temp);
-        //push the now computed structure onto these_structures
-        temp_structures.push_back(temp); //need to make sure the default copy constructor is working properly
-    }
-    return temp_structures;
-}
-
-
-void Gene::compute_structures_circular(Model &model){ //not working
-    //check for circular sequence conditions
-    if (sequence.size() == 0){
-        //throw exception
-
-    }
-    //initializing the iterators ensures that the intial comparison in next_window_from_all_windows is not problematic
-    std::vector<char>::iterator start = sequence.begin(),stop=sequence.begin()+1;
-    windower.reset_window();
-    while (windower.has_next_window_circular()){
-        windower.next_window_from_all_windows_circular(start,stop);
-        Structure temp;
-        //set the Loci of the structure using the gene's Loci
-        temp.position.chromosome = position.chromosome;
-        temp.position.strand = position.strand;
-        temp.position.start_pos = position.start_pos + windower.get_current_start_offset();
-        temp.position.end_pos = position.start_pos + windower.get_current_stop_offset();
-        //pass the structure and window boundaries to the model
-        model.compute_structure(sequence,start,stop,temp);
-        //push the now computed structure onto these_structures
-        rloop_structures.push_back(temp); //need to make sure the default copy constructor is working properly
-    }
-    cout << rloop_structures.size() << endl; //DEBUG
 }
 
 void Gene::compute_residuals(Model &model){

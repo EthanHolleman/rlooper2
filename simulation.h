@@ -90,22 +90,6 @@ public:
     void simulation_A();
 
     /**
-     * Computes P(R-Loop is on the sequence) for a given superhelicity level. Supports any number of models.
-     */
-    void simulation_B(float superhelicity, ofstream& outfile);
-
-    /**
-     * Computes expected length for the ensemble at the given superhelicity value
-     * @param superhelicity
-     */
-    void simulation_C(float superhelicity, ofstream& outfile);
-
-    /**
-     * WIP Dynamic simulation
-     */
-    void simulation_D();
-
-    /**
     * A test environmnet for debugging purposes
     */
     void sandbox();

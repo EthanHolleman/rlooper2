@@ -21,6 +21,7 @@ private:
     std::vector<char> sequence;
     std::vector<Structure> rloop_structures;
     long double ground_state_energy;
+    bool circular_sequence;
 private:
 
     /**
@@ -44,6 +45,9 @@ public:
     const vector<char, allocator<char>> &getSequence() const;
     //void setSequence(const vector<char, allocator<char>> &sequence);
     vector<Structure>& getStructures();
+    bool getCircularSequence();
+    void setCircularSequence(bool value);
+
     //member functions
     /**
      * Reads the next FASTA record from the input file. Calls parse_header.
@@ -63,9 +67,6 @@ public:
      */
     void compute_structures(Model& model);
 
-    vector<Structure> compute_structures_dynamic(Model& model, vector<char> input_sequence);
-
-        void compute_structures_circular(Model& model);
     /**
      * computes residual twist and superhelicity for the ensemble
      */
@@ -81,14 +82,6 @@ public:
      * @return  returns a float representing the GC skew.
      */
     float compute_GC_skew();
-
-    /**
-     * Computes the UY skew of the provided sequence.
-     * @return  returns a float representing the GC skew.
-     */
-    float compute_UY_skew();
-
-    float compute_GC_content();
 
     /**
      * complements the sequence data (A<->T, G<->C)
