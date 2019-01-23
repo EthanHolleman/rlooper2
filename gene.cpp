@@ -45,7 +45,7 @@ void Gene::parse_header(){
 }
 //constructors and destructors
 Gene::Gene(){
-    circular_sequence = false;
+
 }
 
 Gene::~Gene(){
@@ -79,14 +79,6 @@ const vector<char, allocator<char>> &Gene::getSequence() const {
 
 vector<Structure>& Gene::getStructures(){
     return rloop_structures;
-}
-
-bool Gene::getCircularSequence(){
-    return circular_sequence;
-}
-
-void Gene::setCircularSequence(bool value){
-    circular_sequence = value;
 }
 
 float Gene::compute_GC_skew(){
@@ -167,20 +159,6 @@ void Gene::compute_structures(Model &model){
     vector<char> temp_circular_sequence;
     if (sequence.size() == 0){
         //throw exception
-    }
-    //check for circular sequence conditions
-    if (circular_sequence){
-        //create new "circular sequence"
-        for (int i=0; i < sequence.size();i++){
-            temp_circular_sequence.push_back(sequence[i]);
-        }
-        for (int i=0; i < sequence.size();i++){
-            temp_circular_sequence.push_back(sequence[i]);
-        }
-        //set windower to new sequence
-        windower.set_sequence(temp_circular_sequence);
-        //enact boundary condition
-        windower.set_left_limit(temp_circular_sequence[sequence.size()-1]);
     }
     //initializing the iterators ensures that the intial comparison in next_window_from_all_windows is not problematic
     std::vector<char>::iterator start = sequence.begin(),stop=sequence.begin()+1;

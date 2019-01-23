@@ -21,7 +21,6 @@ private:
     std::vector<char> sequence;
     std::vector<Structure> rloop_structures;
     long double ground_state_energy;
-    bool circular_sequence;
 private:
 
     /**
@@ -45,9 +44,6 @@ public:
     const vector<char, allocator<char>> &getSequence() const;
     //void setSequence(const vector<char, allocator<char>> &sequence);
     vector<Structure>& getStructures();
-    bool getCircularSequence();
-    void setCircularSequence(bool value);
-
     //member functions
     /**
      * Reads the next FASTA record from the input file. Calls parse_header.
